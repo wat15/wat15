@@ -3,41 +3,97 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="description" content="Legfrissebb sorozatok, filmek és adatlapok online." />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Legfrissebb Sorozatok | Online Filmek</title>
-    <link rel="stylesheet" href="https://online-filmek.ac/style/v4.css?184" />
+    <title>Videókezelő</title>
     <style>
-        /* Stílusok itt */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            background-color: #F59719;
+            padding: 10px;
+            color: white;
+            text-align: center;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        .thumbnail-container {
+            margin: 10px;
+            text-align: center;
+        }
+        .thumbnail-container iframe {
+            width: 300px;
+            height: 200px;
+            border: none;
+        }
+        .admin-panel {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>Legfrissebb Sorozatok</h1>
-        <a href="admin.html">Admin Felület</a>
+        <h1>Videókezelő</h1>
     </header>
 
     <div class="content" id="videoContainer"></div>
 
+    <div class="admin-panel">
+        <h2>Videó Hozzáadása</h2>
+        <input type="text" id="videoTitle" placeholder="Videó címe" required />
+        <input type="text" id="videoUrl" placeholder="Videó URL" required />
+        <button id="addVideoButton">Videó Hozzáadása</button>
+    </div>
+
     <footer>
-        <p>&copy; 2024 Online Filmek. Minden jog fenntartva.</p>
+        <p>&copy; 2024 Videókezelő. Minden jog fenntartva.</p>
     </footer>
 
     <script>
-        fetch('videos.json')
-            .then(response => response.json())
-            .then(data => {
-                const videoContainer = document.getElementById('videoContainer');
-                data.forEach(video => {
-                    const videoItem = document.createElement('div');
-                    videoItem.innerHTML = `
-                        <h2>${video.title}</h2>
-                        <iframe src="${video.url}" allowfullscreen></iframe>
-                    `;
-                    videoContainer.appendChild(videoItem);
-                });
+        // Videók betöltése a helyi tárolóból
+        function loadVideos() {
+            const videoContainer = document.getElementById('videoContainer');
+            videoContainer.innerHTML = ''; // Ürítsd ki a tartalmat
+            const videos = JSON.parse(localStorage.getItem('videos')) || [];
+            videos.forEach(video => {
+                const videoItem = document.createElement('div');
+                videoItem.className = 'thumbnail-container';
+                videoItem.innerHTML = `
+                    <h2>${video.title}</h2>
+                    <iframe src="${video.url}" allowfullscreen></iframe>
+                `;
+                videoContainer.appendChild(videoItem);
             });
+        }
+
+        // Videó hozzáadása
+        document.getElementById('addVideoButton').addEventListener('click', function () {
+            const title = document.getElementById('videoTitle').value;
+            const url = document.getElementById('videoUrl').value;
+
+            if (title && url) {
+                const videos = JSON.parse(localStorage.getItem('videos')) || [];
+                videos.push({ title, url });
+                localStorage.setItem('videos', JSON.stringify(videos));
+                loadVideos(); // Frissítsd a videók listáját
+                document.getElementById('videoTitle').value = ''; // Töröld az input mezőt
+                document.getElementById('videoUrl').value = ''; // Töröld az input mezőt
+            } else {
+                alert('Kérjük, adjon meg egy érvényes videó címet és URL-t!');
+            }
+        });
+
+        // Betöltés a kezdeti indításkor
+        loadVideos();
     </script>
 </body>
 
