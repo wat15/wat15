@@ -30,67 +30,40 @@
             height: 200px;
             border: none;
         }
-        .admin-panel {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
     </style>
 </head>
 
 <body>
     <header>
         <h1>Videókezelő</h1>
+        <a href="admin.html">Admin Felület</a>
     </header>
 
     <div class="content" id="videoContainer"></div>
-
-    <div class="admin-panel">
-        <h2>Videó Hozzáadása</h2>
-        <input type="text" id="videoTitle" placeholder="Videó címe" required />
-        <input type="text" id="videoUrl" placeholder="Videó URL" required />
-        <button id="addVideoButton">Videó Hozzáadása</button>
-    </div>
 
     <footer>
         <p>&copy; 2024 Videókezelő. Minden jog fenntartva.</p>
     </footer>
 
     <script>
-        // Videók betöltése a helyi tárolóból
+        // Videók betöltése a JSON fájlból
         function loadVideos() {
             const videoContainer = document.getElementById('videoContainer');
             videoContainer.innerHTML = ''; // Ürítsd ki a tartalmat
-            const videos = JSON.parse(localStorage.getItem('videos')) || [];
-            videos.forEach(video => {
-                const videoItem = document.createElement('div');
-                videoItem.className = 'thumbnail-container';
-                videoItem.innerHTML = `
-                    <h2>${video.title}</h2>
-                    <iframe src="${video.url}" allowfullscreen></iframe>
-                `;
-                videoContainer.appendChild(videoItem);
-            });
+            fetch('videos.json')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(video => {
+                        const videoItem = document.createElement('div');
+                        videoItem.className = 'thumbnail-container';
+                        videoItem.innerHTML = `
+                            <h2>${video.title}</h2>
+                            <iframe src="${video.url}" allowfullscreen></iframe>
+                        `;
+                        videoContainer.appendChild(videoItem);
+                    });
+                });
         }
-
-        // Videó hozzáadása
-        document.getElementById('addVideoButton').addEventListener('click', function () {
-            const title = document.getElementById('videoTitle').value;
-            const url = document.getElementById('videoUrl').value;
-
-            if (title && url) {
-                const videos = JSON.parse(localStorage.getItem('videos')) || [];
-                videos.push({ title, url });
-                localStorage.setItem('videos', JSON.stringify(videos));
-                loadVideos(); // Frissítsd a videók listáját
-                document.getElementById('videoTitle').value = ''; // Töröld az input mezőt
-                document.getElementById('videoUrl').value = ''; // Töröld az input mezőt
-            } else {
-                alert('Kérjük, adjon meg egy érvényes videó címet és URL-t!');
-            }
-        });
 
         // Betöltés a kezdeti indításkor
         loadVideos();

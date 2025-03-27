@@ -22,10 +22,13 @@
             const title = document.getElementById('videoTitle').value;
             const url = document.getElementById('videoUrl').value;
 
+            // Betöltjük a meglévő videókat
             fetch('videos.json')
                 .then(response => response.json())
                 .then(data => {
+                    // Hozzáadjuk az új videót
                     data.push({ title, url });
+                    // Elmentjük a frissített listát
                     return fetch('videos.json', {
                         method: 'PUT',
                         headers: {
@@ -36,8 +39,8 @@
                 })
                 .then(() => {
                     alert('Videó hozzáadva!');
-                    document.getElementById('videoTitle').value = '';
-                    document.getElementById('videoUrl').value = '';
+                    document.getElementById('videoTitle').value = ''; // Töröld az input mezőt
+                    document.getElementById('videoUrl').value = ''; // Töröld az input mezőt
                 })
                 .catch(error => {
                     console.error('Hiba:', error);
