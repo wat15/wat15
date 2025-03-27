@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang="hu">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="description" content="Legfrissebb sorozatok, filmek és adatlapok online." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Legfrissebb Sorozatok | Online Filmek</title>
+    <link rel="stylesheet" href="https://online-filmek.ac/style/v4.css?184" />
+    <style>
+        /* Stílusok itt */
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Legfrissebb Sorozatok</h1>
+        <a href="admin.html">Admin Felület</a>
+    </header>
+
+    <div class="content" id="videoContainer"></div>
+
+    <footer>
+        <p>&copy; 2024 Online Filmek. Minden jog fenntartva.</p>
+    </footer>
+
+    <script>
+        fetch('videos.json')
+            .then(response => response.json())
+            .then(data => {
+                const videoContainer = document.getElementById('videoContainer');
+                data.forEach(video => {
+                    const videoItem = document.createElement('div');
+                    videoItem.innerHTML = `
+                        <h2>${video.title}</h2>
+                        <iframe src="${video.url}" allowfullscreen></iframe>
+                    `;
+                    videoContainer.appendChild(videoItem);
+                });
+            });
+    </script>
+</body>
+
+</html>

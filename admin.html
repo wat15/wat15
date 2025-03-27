@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html lang="hu">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Felület</title>
+</head>
+
+<body>
+    <h1>Admin Felület</h1>
+    <form id="videoForm">
+        <input type="text" id="videoTitle" placeholder="Videó címe" required />
+        <input type="text" id="videoUrl" placeholder="Videó URL" required />
+        <button type="submit">Videó Hozzáadása</button>
+    </form>
+
+    <script>
+        document.getElementById('videoForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const title = document.getElementById('videoTitle').value;
+            const url = document.getElementById('videoUrl').value;
+
+            fetch('videos.json')
+                .then(response => response.json())
+                .then(data => {
+                    data.push({ title, url });
+                    return fetch('videos.json', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                })
+                .then(() => {
+                    alert('Videó hozzáadva!');
+                    document.getElementById('videoTitle').value = '';
+                    document.getElementById('videoUrl').value = '';
+                })
+                .catch(error => {
+                    console.error('Hiba:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>
